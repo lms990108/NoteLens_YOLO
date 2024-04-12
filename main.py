@@ -1,4 +1,4 @@
-# 실행 명령어 uvicorn main:app --reload
+# 실행 명령어 uvicorn main:app --reload --port=8001
 # 포트번호 : 8000번
 # api list : localhost:8000/docs
 from fastapi import FastAPI

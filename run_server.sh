@@ -18,7 +18,7 @@ fi
 
 # uvicorn 실행
 echo "** uvicorn 서버 실행 시작 **" >> server.log
-uvicorn main:app --reload >> server.log
+uvicorn main:app --reload --port=8001 >> server.log
 echo "** uvicorn 서버 실행 종료 **" >> server.log
 
 # 에러 발생 시 종료
