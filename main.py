@@ -2,7 +2,7 @@
 # 포트번호 : 8000번
 # api list : localhost:8000/docs
 from fastapi import FastAPI
-from app.router import testRouter, imageRouter
+from app.router import imageRouter
 
 app = FastAPI()
 

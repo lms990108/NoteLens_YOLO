@@ -13,9 +13,6 @@ logger = logging.getLogger(__name__)
 
 imageRouter = APIRouter()
 
-# 프로젝트 루트 디렉토리의 경로
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 class Item(BaseModel):
     img_url: str
     
