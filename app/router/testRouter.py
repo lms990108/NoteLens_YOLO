@@ -8,4 +8,5 @@ def read_root():
 
 @testRouter.get("/items/{item_id}")
 def read_item(item_id: int, q: str = None):
+    print("test branch")
     return {"item_id": item_id, "q": q}
