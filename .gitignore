@@ -238,3 +238,4 @@ images
 
 # Ignore jpg files in the test/resources directory
 app/ai/test/images/*.jpg
+app/test/notes/*
