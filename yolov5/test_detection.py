@@ -121,7 +121,7 @@ def run(
     print("save_dir", save_dir) #####################
     
     (save_dir / "labels" if save_txt else save_dir).mkdir(parents=True, exist_ok=True)  # make dir
-    # save_crop
+    # 크롭 이미지 저장으로 변경
     save_crop = True
     
 
