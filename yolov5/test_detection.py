@@ -95,8 +95,8 @@ def run(
     augment=False,  # augmented inference
     visualize=False,  # visualize features
     update=False,  # update all models
-    project=ROOT / "test",  # save results to project/name
-    name="test_detect",  # save results to project/name
+    project=ROOT / "runs/detect",  # save results to project/name
+    name="exp",  # save results to project/name
     exist_ok=False,  # existing project/name ok, do not increment
     line_thickness=3,  # bounding box thickness (pixels)
     hide_labels=False,  # hide labels
@@ -121,9 +121,10 @@ def run(
     print("save_dir", save_dir) #####################
     
     (save_dir / "labels" if save_txt else save_dir).mkdir(parents=True, exist_ok=True)  # make dir
-    # save_crop
+    # 크롭된 이미지 저장
     save_crop = True
-    
+    weights = ROOT / "weights/best.pt"
+    name = "test"
 
     # Load model
     device = select_device(device)
