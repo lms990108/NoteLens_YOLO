@@ -95,8 +95,8 @@ def run(
     augment=False,  # augmented inference
     visualize=False,  # visualize features
     update=False,  # update all models
-    project=ROOT / "test",  # save results to project/name
-    name="test_detect",  # save results to project/name
+    project=ROOT / "runs/detect",  # save results to project/name
+    name="exp",  # save results to project/name
     exist_ok=False,  # existing project/name ok, do not increment
     line_thickness=3,  # bounding box thickness (pixels)
     hide_labels=False,  # hide labels
@@ -114,16 +114,20 @@ def run(
     if is_url and is_file:
         source = check_file(source)  # download
 
+
+    ####################################
     # Directories
-    # yolov5/test/test_detect, 1, 2, ....
+    # yolov5/test/test_detect, 1, 2, .... 등으로 표기됨
     save_dir = increment_path(Path(project) / name, exist_ok=exist_ok)  # increment run 
+    
     
     print("save_dir", save_dir) #####################
     
     (save_dir / "labels" if save_txt else save_dir).mkdir(parents=True, exist_ok=True)  # make dir
-    # save_crop
     save_crop = True
-    
+    weights = ROOT / "weights/best.pt"
+    name = "test"
+    #####################################
 
     # Load model
     device = select_device(device)
@@ -189,10 +193,6 @@ def run(
                     writer.writeheader()
                 writer.writerow(data)
 
-
-
-        result_list = [] # 크롭된 이미지 저장을 위한 리스트
-
         # Process predictions
         for i, det in enumerate(pred):  # per image
             seen += 1
@@ -241,7 +241,7 @@ def run(
                         c = int(cls)  # integer class
                         label = None if hide_labels else (names[c] if hide_conf else f"{names[c]} {conf:.2f}")
                         annotator.box_label(xyxy, label, color=colors(c, True))
-                    if save_crop:
+                    if save_crop: # 크롭된 이미지 저장 경로 수정 가능
                         save_one_box(xyxy, imc, file=save_dir / "crops" / names[c] / f"{p.stem}.jpg", BGR=True)
             
             # if len(det):
