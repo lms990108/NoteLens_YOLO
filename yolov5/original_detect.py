@@ -37,14 +37,6 @@ from pathlib import Path
 
 import torch
 
-
-# PosixPath 오류 해결을 위한 코드
-import pathlib
-temp = pathlib.PosixPath
-pathlib.PosixPath = pathlib.WindowsPath
-
-
-
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
@@ -114,20 +106,9 @@ def run(
     if is_url and is_file:
         source = check_file(source)  # download
 
-
-    ####################################
     # Directories
-    # yolov5/test/test_detect, 1, 2, .... 등으로 표기됨
-    save_dir = increment_path(Path(project) / name, exist_ok=exist_ok)  # increment run 
-    
-    
-    print("save_dir", save_dir) #####################
-    
+    save_dir = increment_path(Path(project) / name, exist_ok=exist_ok)  # increment run
     (save_dir / "labels" if save_txt else save_dir).mkdir(parents=True, exist_ok=True)  # make dir
-    save_crop = True
-    weights = ROOT / "weights/best.pt"
-    name = "test"
-    #####################################
 
     # Load model
     device = select_device(device)
@@ -202,8 +183,6 @@ def run(
             else:
                 p, im0, frame = path, im0s.copy(), getattr(dataset, "frame", 0)
 
-
-
             p = Path(p)  # to Path
             save_path = str(save_dir / p.name)  # im.jpg
             txt_path = str(save_dir / "labels" / p.stem) + ("" if dataset.mode == "image" else f"_{frame}")  # im.txt
@@ -211,7 +190,6 @@ def run(
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             imc = im0.copy() if save_crop else im0  # for save_crop
             annotator = Annotator(im0, line_width=line_thickness, example=str(names))
-            
             if len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_boxes(im.shape[2:], det[:, :4], im0.shape).round()
@@ -241,54 +219,8 @@ def run(
                         c = int(cls)  # integer class
                         label = None if hide_labels else (names[c] if hide_conf else f"{names[c]} {conf:.2f}")
                         annotator.box_label(xyxy, label, color=colors(c, True))
-                    if save_crop: # 크롭된 이미지 저장 경로 수정 가능
+                    if save_crop:
                         save_one_box(xyxy, imc, file=save_dir / "crops" / names[c] / f"{p.stem}.jpg", BGR=True)
-            
-            # if len(det):
-            #     # Rescale boxes from img_size to im0 size
-            #     det[:, :4] = scale_boxes(im.shape[2:], det[:, :4], im0.shape).round()
-
-            #     # Print results
-            #     for c in det[:, 5].unique():
-            #         n = (det[:, 5] == c).sum()  # detections per class
-            #         s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
-
-            #     # Write results
-            #     j = 0 # 크롭된 이미지 저장을 위한 인덱스
-            #     for *xyxy, conf, cls in reversed(det):
-                    
-            #         # 크롭된 이미지 저장
-            #         x1, y1, x2, y2 = map(int, xyxy)
-            #         crop_img = im0[y1:y2, x1:x2]
-            #         result_list.append([x1, y1, x2, y2, conf.item(), int(cls)])
-            #         print("save_path: ", save_path, "i: ", j)
-            #         result_save_path = save_path + "_crop_" + str(i) + ".jpg"
-            #         print("result_save_path: ", result_save_path) #####################
-            #         cv2.imwrite(result_save_path, crop_img)
-                    
-                    
-                    
-                    
-            #         c = int(cls)  # integer class
-            #         label = names[c] if hide_conf else f"{names[c]}"
-            #         confidence = float(conf)
-            #         confidence_str = f"{confidence:.2f}"
-
-            #         if save_csv:
-            #             write_to_csv(p.name, label, confidence_str)
-
-            #         if save_txt:  # Write to file
-            #             xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-            #             line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
-            #             with open(f"{txt_path}.txt", "a") as f:
-            #                 f.write(("%g " * len(line)).rstrip() % line + "\n")
-
-            #         if save_img or save_crop or view_img:  # Add bbox to image
-            #             c = int(cls)  # integer class
-            #             label = None if hide_labels else (names[c] if hide_conf else f"{names[c]} {conf:.2f}")
-            #             annotator.box_label(xyxy, label, color=colors(c, True))
-            #         if save_crop:
-            #             save_one_box(xyxy, imc, file=save_dir / "crops" / names[c] / f"{p.stem}.jpg", BGR=True)
 
             # Stream results
             im0 = annotator.result()

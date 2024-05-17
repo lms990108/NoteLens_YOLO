@@ -4,18 +4,43 @@ from typing import List
 import os
 from io import BytesIO
 
-# from ..service.ocrService import OCRService
-from ..service.yoloService import YoloService
+import logging
+from app.service.yoloService import YOLOv5Service
 
 
-# OCR 서비스 인스턴스화
-yolo_service = YoloService()
+
+
+logging.config.fileConfig('app/config/logging_config.ini')
+logger = logging.getLogger(__name__)
+
+# YOLOv5 서비스 인스턴스 생성 (사용자 지정 가중치 경로를 전달)
+weights_path = 'yolov5/weights/best.pt'
+yolov5_service = YOLOv5Service()
+logger.info(f"YOLOv5 가중치 경로: {weights_path}")
+
+
 yoloRouter = APIRouter()
 
 @yoloRouter.post("/yolo", response_model=List[str])
 async def process_image(file: UploadFile = File(...)):
+    # 임시 저장할 파일 경로
+    temp_file_path = f"temp_{file.filename}"
+    with open(temp_file_path, "wb") as buffer:
+        buffer.write(await file.read())
+    logger.info(f"임시 파일 경로: {temp_file_path}")
+    
     # yolo로 이미지 크롭 실행
-    yolo_service.detect_objects(file)
+    rst = yolov5_service.test_detect(temp_file_path)
+    logger.info("YOLOv5 /yolo FILE 객체 탐지를 성공적으로 수행했습니다.")
+    
+    # 임시 파일 삭제
+    # os.remove(temp_file_path)
+    # logger.info("임시 파일을 성공적으로 삭제했습니다.")
+    
+    return rst
+
+    
+
 
 @yoloRouter.post("/yolo-from-url", response_model=List[str])
 async def process_image_from_url(image_url: str):
@@ -37,4 +62,4 @@ async def process_image_from_url(image_url: str):
     
     # return texts
     
-    yolo_service.detect_objects(image_path)
+    yolov5_service.detect_objects(image_path)
