@@ -29,13 +29,13 @@ class YOLOv5Service:
         #     logger.error(f"YOLOv5 모델 로드 중 오류 발생: {e}")
         #     raise
         
-        self.detect_objects = test_detection
+        self.test = test_detection.run
     
     def test_detect(self, image_path):
         logger.info("test_detect 함수 실행")
         # 객체 탐지 수행
 
-        results = test_detection(source=image_path)
+        results = self.test(source=image_path)
         logger.info("test_detect 내 test_detection 함수를 성공적으로 수행했습니다.")
         
         # 탐지된 객체의 위치 정보를 사용하여 이미지를 잘라냅니다.
