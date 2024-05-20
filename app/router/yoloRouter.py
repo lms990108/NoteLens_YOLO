@@ -38,7 +38,7 @@ async def process_image(file: UploadFile = File(...)):
     logger.info(f"임시 파일 경로: {temp_file_path}")
     
     # yolo로 이미지 크롭, ocr 수행 후 결과 리턴
-    # yolov5_service.test_textDetectionAndOCR(temp_file_path)
+    yolov5_service.test_textDetectionAndOCR(temp_file_path)
     logger.info("YOLOv5 /yolo FILE 객체 탐지를 성공적으로 수행했습니다.")
     
     # 임시 파일 삭제
