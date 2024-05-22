@@ -241,3 +241,6 @@ app/ai/test/images/*.jpg
 app/test/notes/*
 
 yolov5/runs/
+
+
+yolov5/runs/detect/*
