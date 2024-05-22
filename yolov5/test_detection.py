@@ -33,16 +33,18 @@ import csv
 import os
 import platform
 import sys
-from pathlib import Path
 
 import torch
 
-
-# PosixPath 오류 해결을 위한 코드
-import pathlib
-temp = pathlib.PosixPath
-pathlib.PosixPath = pathlib.WindowsPath
-
+# 윈도우에서만 실행할 코드 - PosixPath를 WindowsPath로 변경
+if os.name == 'nt':
+    from pathlib import Path
+    import pathlib
+    temp = pathlib.PosixPath
+    pathlib.PosixPath = pathlib.WindowsPath
+else:
+#If you have linux (or deploying for linux) use:
+    from pathlib import Path
 
 
 FILE = Path(__file__).resolve()

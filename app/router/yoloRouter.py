@@ -18,10 +18,14 @@ logger = logging.getLogger(__name__)
 
 # 윈도우에서만 실행할 코드 - PosixPath를 WindowsPath로 변경
 if os.name == 'nt':
+    from pathlib import Path
     import pathlib
     temp = pathlib.PosixPath
     pathlib.PosixPath = pathlib.WindowsPath
-    logger.info("윈도우에서 실행 중")
+else:
+# 리눅스 환경
+    from pathlib import Path
+
 
 # YOLOv5 서비스 인스턴스 생성 (사용자 지정 가중치 경로를 전달)
 weights_path = 'yolov5/weights/best.pt'
