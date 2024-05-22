@@ -56,7 +56,7 @@ async def process_image(file: UploadFile = File(...)):
     # 멀티 파일 전송 테스트
     # url = "http://localhost:8000/api/ocr/ocr-multi" # 로컬 테스트용 주소
     # 크롭된 이미지들을 ocr 서비스로 전달
-    url = "http://43.203.54.176:8000/api/ocr/ocr" # ocr 서비스 주소
+    url = "http://43.203.54.176:8000/api/ocr/ocr-multi" # ocr 서비스 주소
     files_data = []
     open_files = []  # 파일 객체들을 이후 close 하기 위한 리스트
     for file_path in dir_path.glob("*.jpg"):
@@ -126,7 +126,7 @@ async def process_image_from_url(image_url: str):
     # 멀티 파일 전송 테스트
     # url = "http://localhost:8000/api/ocr/ocr-multi" # 로컬 테스트용 주소
     # 크롭된 이미지들을 ocr 서비스로 전달
-    url = "http://43.203.54.176:8000/api/ocr/ocr" # ocr 서비스 주소
+    url = "http://43.203.54.176:8000/api/ocr/ocr-multi" # ocr 서비스 주소
     files_data = []
     open_files = []  # 파일 객체들을 이후 close 하기 위한 리스트
     for file_path in dir_path.glob("*.jpg"):
