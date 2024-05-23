@@ -106,7 +106,7 @@ def run(
     half=False,  # use FP16 half-precision inference
     dnn=False,  # use OpenCV DNN for ONNX inference
     vid_stride=1,  # video frame-rate stride
-    mongo_id="test_mongo_id", # mongoDB id
+    mongo_id="test_id", # mongoDB id
 ):
     
     
