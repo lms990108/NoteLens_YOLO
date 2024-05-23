@@ -38,10 +38,10 @@ yoloRouter = APIRouter()
 # api 정의
 # 이미지를 파일로 직접 받아서 YOLOv5로 객체 탐지 수행
 @yoloRouter.post("/yolo", response_model=Dict[str, List[str]])
-async def process_image(file: UploadFile = File(...), test_mongo_id: str = None):
+async def process_image(file: UploadFile = File(...), ):
     
     # 몽고아이디
-    mongo_id = test_mongo_id
+    mongo_id = "test_mongo_id"
     
     # 임시 저장할 파일 경로
     temp_file_path = f"temp_{file.filename}"
@@ -102,6 +102,7 @@ async def process_image(file: UploadFile = File(...), test_mongo_id: str = None)
             raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {exc}")
         finally:
             for f in open_files:
+                os.remove(f.name) # 욜로 처리된 크롭된 파일들 삭제
                 f.close()  # 모든 파일 객체 닫기
             logger.info("모든 파일 객체를 닫았습니다.")
 
