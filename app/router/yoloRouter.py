@@ -50,7 +50,7 @@ async def process_image(file: UploadFile = File(...), ):
     logger.info(f"임시 파일 경로: {temp_file_path}")
     
     # yolo로 이미지 크롭, ocr 수행 후 결과 리턴
-    yolov5_service.textDetection(source=temp_file_path, mongo_id=mongo_id)
+    yolov5_service.textDetection(image_path=temp_file_path, mongo_id=mongo_id)
     logger.info("YOLOv5 /yolo FILE 객체 탐지를 성공적으로 수행했습니다.")
     
     # 임시 파일 삭제
@@ -60,7 +60,7 @@ async def process_image(file: UploadFile = File(...), ):
     # 몽고아이디로 파일에 접근
     dir_path = Path("yolov5") / "runs" / "detect" / mongo_id / "crops" / "underline text"
     
-    # 멀티 파일 전송 테스트
+    
     # url = "http://localhost:8000/api/ocr/ocr-multi" # 로컬 테스트용 주소
     # 크롭된 이미지들을 ocr 서비스로 전달
     url = "http://43.203.54.176:8000/api/ocr/ocr-multi" # ocr 서비스 주소
@@ -102,8 +102,9 @@ async def process_image(file: UploadFile = File(...), ):
             raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {exc}")
         finally:
             for f in open_files:
-                os.remove(f.name) # 욜로 처리된 크롭된 파일들 삭제
                 f.close()  # 모든 파일 객체 닫기
+            for file_path in dir_path.glob("*.jpg"):
+                os.remove(file_path) # 크롭된 이미지 파일 삭제
             logger.info("모든 파일 객체를 닫았습니다.")
 
 
@@ -112,6 +113,10 @@ async def process_image(file: UploadFile = File(...), ):
 # 아직 몽고아이디를 받아서 처리하는 부분은 없음
 @yoloRouter.post("/yolo-from-url", response_model=List[str])
 async def process_image_from_url(image_url: str):
+    
+    # 몽고아이디
+    mongo_id = "test_mongo_id"
+    
     try:
         response = requests.get(image_url)
         response.raise_for_status()  # 에러가 발생하면 HTTPException을 발생시킵니다.
@@ -128,8 +133,6 @@ async def process_image_from_url(image_url: str):
     
     os.remove(temp_image_path)
     
-    # 몽고아이디로 파일에 접근
-    mongo_id = "TEST_mongo_id"
     dir_path = Path("yolov5") / "runs" / "detect" / mongo_id / "crops" / "underline text"
     
     # 멀티 파일 전송 테스트

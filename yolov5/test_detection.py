@@ -106,9 +106,12 @@ def run(
     half=False,  # use FP16 half-precision inference
     dnn=False,  # use OpenCV DNN for ONNX inference
     vid_stride=1,  # video frame-rate stride
-    mongo_id=None, # mongoDB id
+    mongo_id="test_mongo_id", # mongoDB id
 ):
+    
+    
     ####################################
+    
     # Directories
     weights = ROOT / "weights/best.pt"
     save_crop = True
@@ -123,8 +126,6 @@ def run(
     save_dir = increment_path(Path(project) / name, exist_ok=exist_ok)  # increment run 
     print("save_dir: ", save_dir)
     (save_dir / "labels" if save_txt else save_dir).mkdir(parents=True, exist_ok=True)  # make dir
-    
-    
     
     #####################################
     
