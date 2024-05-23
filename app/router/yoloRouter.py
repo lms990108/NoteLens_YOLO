@@ -38,7 +38,11 @@ yoloRouter = APIRouter()
 # api 정의
 # 이미지를 파일로 직접 받아서 YOLOv5로 객체 탐지 수행
 @yoloRouter.post("/yolo", response_model=Dict[str, List[str]])
-async def process_image(file: UploadFile = File(...)):
+async def process_image(file: UploadFile = File(...), ):
+    
+    # 몽고아이디
+    mongo_id = "test_mongo_id"
+    
     # 임시 저장할 파일 경로
     temp_file_path = f"temp_{file.filename}"
     with open(temp_file_path, "wb") as buffer:
@@ -46,7 +50,7 @@ async def process_image(file: UploadFile = File(...)):
     logger.info(f"임시 파일 경로: {temp_file_path}")
     
     # yolo로 이미지 크롭, ocr 수행 후 결과 리턴
-    yolov5_service.textDetection(temp_file_path)
+    yolov5_service.textDetection(source=temp_file_path, mongo_id=mongo_id)
     logger.info("YOLOv5 /yolo FILE 객체 탐지를 성공적으로 수행했습니다.")
     
     # 임시 파일 삭제
@@ -54,7 +58,6 @@ async def process_image(file: UploadFile = File(...)):
     logger.info("임시 파일을 성공적으로 삭제했습니다 - 욜로 크롭 수행 종료")
     
     # 몽고아이디로 파일에 접근
-    mongo_id = "TEST_mongo_id"
     dir_path = Path("yolov5") / "runs" / "detect" / mongo_id / "crops" / "underline text"
     
     # 멀티 파일 전송 테스트
@@ -99,12 +102,14 @@ async def process_image(file: UploadFile = File(...)):
             raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {exc}")
         finally:
             for f in open_files:
+                os.remove(f.name) # 욜로 처리된 크롭된 파일들 삭제
                 f.close()  # 모든 파일 객체 닫기
             logger.info("모든 파일 객체를 닫았습니다.")
 
 
 
 # url로 이미지를 받아서 YOLOv5로 객체 탐지 수행
+# 아직 몽고아이디를 받아서 처리하는 부분은 없음
 @yoloRouter.post("/yolo-from-url", response_model=List[str])
 async def process_image_from_url(image_url: str):
     try:

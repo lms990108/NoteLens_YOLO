@@ -116,7 +116,7 @@ def run(
     nosave = True # 결과 이미지 저장 안함
     
     # 나중에 매개변수의 mongo_id로 수정    
-    mongo_id = "TEST_mongo_id"
+    mongo_id = mongo_id
     name = mongo_id
     
     # yolov5/runs/detect/{mongo_id}로 save_dir 설정
