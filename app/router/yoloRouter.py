@@ -5,7 +5,7 @@ import os
 from io import BytesIO
 
 
-
+import shutil
 from pathlib import Path
 import httpx
 import logging
@@ -59,11 +59,12 @@ async def process_image(file: UploadFile = File(...), ):
     
     # 몽고아이디로 파일에 접근
     dir_path = Path("yolov5") / "runs" / "detect" / mongo_id / "crops" / "underline text"
+    remove_folder_path = Path("yolov5") / "runs" / "detect" / mongo_id
     
-    
-    # url = "http://localhost:8000/api/ocr/ocr-multi" # 로컬 테스트용 주소
     # 크롭된 이미지들을 ocr 서비스로 전달
-    url = "http://43.203.54.176:8000/api/ocr/ocr-multi" # ocr 서비스 주소
+    # url = "http://localhost:8000/api/ocr/ocr-multi" # 로컬 테스트용 주소
+    # url = "http://43.203.54.176:8000/api/ocr/ocr-multi" # 이민섭 ocr서버 api 주소
+    url = "http://43.203.93.209:8000/api/ocr/ocr-multi" # 주영운 ec2의 ocr서버 api 주소
     files_data = []
     open_files = []  # 파일 객체들을 이후 close 하기 위한 리스트
     for file_path in dir_path.glob("*.jpg"):
@@ -71,41 +72,48 @@ async def process_image(file: UploadFile = File(...), ):
         files_data.append(('files', (file_path.name, f, 'image/jpeg')))
         open_files.append(f)  # 나중에 닫기 위해 파일 객체 저장
     
-    # logger.info("httpx 작업 전 - files_data: ", files_data)
+    logger.info("httpx 작업 전 - 수신지 url: {url}")
     
     
     async with httpx.AsyncClient() as client:
 
         try:
-            # logger.info("httpx 작업 중 - files_data: ", files_data)
-            response = await client.post(url, files=files_data)
+            logger.info("httpx 작업 중 - await client.post() 이전")
             
-            logger.info("httpx 작업 중 - await 이후")
+            # response = await client.post(url=url, files=files_data)
+            
+            # 15초 동안 기다리는 코드
+            response = await client.post(url=url, files=files_data, timeout=30)
+            
+            result_texts = response.json()
+            logger.info("httpx를 통해 ocr 서버의 api로부터 리턴값 받음")
             response.raise_for_status()  # 응답 상태 코드가 4xx 또는 5xx인 경우 예외 발생
-            
-            logger.info("httpx 작업 수행됨 올바른지 아닌지 모름")
-            try:
-                result_texts = response.json()
-                return result_texts
-            except Exception as e:
-                logger.error(f"Error while parsing response: {e}")
-                raise HTTPException(status_code=500, detail="Error while parsing response")
+            return result_texts
         
         except httpx.RequestError as exc:
             # 요청 중에 발생한 네트워크 오류 처리
+            logger.error(f"Request error while requesting server2: {exc}")
             raise HTTPException(status_code=500, detail=f"Error while requesting server2: {exc}")
         except httpx.HTTPStatusError as exc:
             # 서버2에서 반환한 오류 상태 코드 처리
+            logger.error(f"HTTP error response from server2: {exc.response.text}")
             raise HTTPException(status_code=exc.response.status_code, detail=f"Error response from server2: {exc.response.text}")
         except Exception as exc:
             # 기타 예외 처리
+            logger.error(f"Unexpected error: {exc}")
             raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {exc}")
         finally:
+            # 모든 파일 객체 닫기
             for f in open_files:
-                f.close()  # 모든 파일 객체 닫기
-            for file_path in dir_path.glob("*.jpg"):
-                os.remove(file_path) # 크롭된 이미지 파일 삭제
+                f.close()  
             logger.info("모든 파일 객체를 닫았습니다.")
+            
+            # 폴더 및 그 내용 삭제
+            if os.path.exists(remove_folder_path):
+                shutil.rmtree(remove_folder_path)
+                logger.info(f"폴더 '{remove_folder_path}' 가 성공적으로 삭제되었습니다.")
+            else:
+                logger.info(f"폴더 '{remove_folder_path}' 가 존재하지 않습니다.")
 
 
 
