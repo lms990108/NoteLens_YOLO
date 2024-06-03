@@ -115,7 +115,7 @@ def run(
     # Directories
     weights = ROOT / "weights/best.pt"
     save_crop = True
-    conf_thres=0.4 # 객체 확률을 0.4이상인 것들만 탐지
+    conf_thres=0.65 # 객체 확률을 0.65이상인 것들만 탐지
     nosave = True # 결과 이미지 저장 안함
     
     # 나중에 매개변수의 mongo_id로 수정    
