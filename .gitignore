@@ -239,3 +239,8 @@ images
 # Ignore jpg files in the test/resources directory
 app/ai/test/images/*.jpg
 app/test/notes/*
+
+yolov5/runs/
+
+
+yolov5/runs/detect/*

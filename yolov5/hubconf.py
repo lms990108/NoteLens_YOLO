@@ -29,7 +29,11 @@ def _create(name, pretrained=True, channels=3, classes=80, autoshape=True, verbo
     Returns:
         YOLOv5 model
     """
+    # from pathlib import Path
+    # PosixPath 오류 해결을 위한 코드
+    import pathlib
     from pathlib import Path
+    pathlib.PosixPath = pathlib.WindowsPath
 
     from models.common import AutoShape, DetectMultiBackend
     from models.experimental import attempt_load
