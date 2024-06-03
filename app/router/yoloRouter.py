@@ -23,12 +23,12 @@ yolov5_service = YOLOv5Service()
 
 yoloRouter = APIRouter()
 
-SERVER2_HEALTH_URL = "http://localhost:8000/api/test/health"  # 로컬 테스트용 주소
-SERVER2_OCR_MULTI_URL = "http://localhost:8000/api/ocr/ocr-multi"  # 로컬 테스트용 주소
+# SERVER2_HEALTH_URL = "http://localhost:8000/api/test/health"  # 로컬 테스트용 주소
+# SERVER2_OCR_MULTI_URL = "http://localhost:8000/api/ocr/ocr-multi"  # 로컬 테스트용 주소
 
 # 서버2의 주소 및 OCR 서비스 주소
-# SERVER2_HEALTH_URL = "http://43.203.54.176:8000/api/test/health"
-# SERVER2_OCR_MULTI_URL = "http://43.203.54.176:8000/api/ocr/ocr-multi"  # 이민섭 ocr서버 api 주소
+SERVER2_HEALTH_URL = "http://43.203.54.176:8000/api/test/health"
+SERVER2_OCR_MULTI_URL = "http://43.203.54.176:8000/api/ocr/ocr-multi"  # 이민섭 ocr서버 api 주소
 # SERVER2_OCR_MULTI_URL = "http://43.203.93.209:8000/api/ocr/ocr-multi"  # 주영운 ec2의 ocr서버 api 주소
 
 # 파일을 직접 받아서 작업하는 API
